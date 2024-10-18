@@ -81,6 +81,12 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
+  async updateQuantity(productId: number, newQuantity: number): Promise<Product> {
+    const product = await this.findOne(productId);
+    product.quantity = newQuantity;
+    return await this.productRepository.save(product);
+  }
+
   async remove(id: number): Promise<void> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);

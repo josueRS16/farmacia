@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, DefaultValuePipe, ParseIntPipe, BadRequestException } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, DefaultValuePipe, ParseIntPipe, BadRequestException, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './products.service';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @ApiTags('products')
 @Controller('products')
@@ -10,6 +12,9 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
+  @ApiBearerAuth('access-token')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'external_user')
   @ApiOperation({ summary: 'Crear un nuevo producto' })
   async create(@Body() createProductDto: CreateProductDto) {
     return await this.productService.create(createProductDto);
@@ -28,6 +33,9 @@ export class ProductController {
   }
 
   @Get()
+  @ApiBearerAuth('access-token')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'external_user')
   @ApiOperation({ summary: 'Obtener todos los productos' })
   async findAll() {
     return await this.productService.findAll();

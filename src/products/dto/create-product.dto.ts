@@ -18,11 +18,6 @@ export class CreateProductDto {
   @IsDate({ message: 'expireDate debe ser una fecha válida.' })
   readonly expireDate: Date;
 
-  @ApiProperty({ description: 'Número de lote del producto' })
-  @IsNumber()
-  @IsNotEmpty()
-  readonly lot: number;
-
   @ApiProperty({ description: 'Cantidad disponible del producto' })
   @IsNumber()
   @Min(0)

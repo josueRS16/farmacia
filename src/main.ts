@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +10,14 @@ async function bootstrap() {
   .setTitle('Sistema Integral de Gestión de Farmacias')
   .setDescription('Sistema de gestión de inventario, ventas y cumplimiento normativo en la dispensación de medicamentos.')
   .setVersion('1.0')
+  .addBearerAuth(  
+    {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT', 
+    },
+    'access-token', 
+  )
   .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -22,6 +30,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true, // Opcional: lanza error si hay propiedades no permitidas
     }),
   );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(3000);
   console.log('Swagger está disponible en: http://localhost:3000/api')
