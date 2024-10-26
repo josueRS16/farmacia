@@ -38,7 +38,10 @@ export class SalesInvoice {
   client: Client;
 
   @ApiProperty({ description: 'Detalles de la factura de venta', type: [SalesInvoiceDetail] })
-  @OneToMany(() => SalesInvoiceDetail, (detail) => detail.salesInvoice, { cascade: true })
+  @OneToMany(() => SalesInvoiceDetail, (detail) => detail.salesInvoice, { 
+    cascade: true, 
+    eager: true,
+    onDelete: 'CASCADE',})
   @Type(() => SalesInvoiceDetail) // Aseguramos la transformación correcta
   details: SalesInvoiceDetail[];
 }

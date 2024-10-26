@@ -83,7 +83,7 @@ export class SalesInvoiceService {
 
   async findAll(): Promise<SalesInvoice[]> {
     return await this.salesInvoiceRepository.find({
-      relations: ['seller.branch','client', 'prescription.doctor', 'prescription.client', 'details', 'details.product'],
+      relations: ['seller.branch','client', 'prescription.doctor', 'prescription.client', 'prescription.details', 'details', 'details.product.category'],
     });
   }
 
@@ -121,5 +121,4 @@ export class SalesInvoiceService {
     );
   }
 
-  // Métodos para actualizar y eliminar si son necesarios
 }

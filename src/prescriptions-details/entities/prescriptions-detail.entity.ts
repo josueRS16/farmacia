@@ -14,11 +14,13 @@ export class PrescriptionDetail {
 
   @ApiProperty({ description: 'Quantity prescribed' })
   @Column({ type: 'int' })
+  @Expose()
   quantity: number;
 
   @ApiProperty({ description: 'Prescription associated', type: () => Prescription })
   @ManyToOne(() => Prescription, (prescription) => prescription.details, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
     // @Expose() // Do not expose the prescription to prevent recursion
   prescription: Prescription;
