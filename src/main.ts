@@ -4,7 +4,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: false,
+  });
+
+  app.enableCors({
+    origin: '*',
+  });
 
   const config = new DocumentBuilder()
   .setTitle('Sistema Integral de Gestión de Farmacias')

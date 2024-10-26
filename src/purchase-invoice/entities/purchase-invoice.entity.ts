@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'ty
 import { ApiProperty } from '@nestjs/swagger';
 import { Supplier } from 'src/suppliers/entities/supplier.entity';
 import { PurchaseInvoiceDetail } from 'src/purchase-invoice-detail/entities/purchase-invoice-detail.entity';
+import { Warehouse } from 'src/ware-houses/entities/ware-house.entity';
 
 @Entity()
 export class PurchaseInvoice {
@@ -26,9 +27,17 @@ export class PurchaseInvoice {
   negotiatedPrices: string;
 
   @ApiProperty({ description: 'Proveedor asociado', type: () => Supplier })
-  @ManyToOne(() => Supplier, (supplier) => supplier.purchaseInvoices)
+  @ManyToOne(() => Supplier, (supplier) => supplier.purchaseInvoices, { eager: true })
   supplier: Supplier;
 
-  @OneToMany(() => PurchaseInvoiceDetail, (detail) => detail.purchaseInvoice)
+  @ApiProperty({ description: 'Almacén asociado', type: () => Warehouse })
+  @ManyToOne(() => Warehouse, (warehouse) => warehouse.purchaseInvoices, { eager: true })
+  warehouse: Warehouse;
+
+  @OneToMany(() => PurchaseInvoiceDetail, (detail) => detail.purchaseInvoice, {
+    cascade: true, // Permite operaciones en cascada
+    eager: true,
+    onDelete: 'CASCADE', // Asegura que los detalles se eliminen al eliminar la factura
+  })
   details: PurchaseInvoiceDetail[];
 }

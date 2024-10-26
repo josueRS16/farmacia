@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Inventory } from 'src/inventories/entities/inventory.entity';
+import { PurchaseInvoice } from 'src/purchase-invoice/entities/purchase-invoice.entity';
 
 @Entity()
 export class Warehouse {
@@ -23,6 +24,9 @@ export class Warehouse {
   @ApiProperty({ description: 'Manager of the warehouse' })
   @Column({ length: 100 })
   manager: string;
+
+  @OneToMany(() => PurchaseInvoice, (purchaseInvoices) => purchaseInvoices.warehouse)
+  purchaseInvoices: PurchaseInvoice[];
 
   @OneToMany(() => Inventory, (inventory) => inventory.warehouse)
   inventories: Inventory[];

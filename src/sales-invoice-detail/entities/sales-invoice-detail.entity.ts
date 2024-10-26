@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { SalesInvoice } from 'src/sales-invoice/entities/sales-invoice.entity';
 import { Product } from 'src/products/entities/product.entity';
-import { Exclude, Type } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class SalesInvoiceDetail {
@@ -11,7 +11,9 @@ export class SalesInvoiceDetail {
   salesInvoiceDetailId: number;
 
   @ApiProperty({ description: 'Factura de venta asociada', type: () => SalesInvoice })
-  @ManyToOne(() => SalesInvoice, (salesInvoice) => salesInvoice.details)
+  @ManyToOne(() => SalesInvoice, (salesInvoice) => salesInvoice.details, {
+    onDelete: 'CASCADE',
+  })
   @Exclude() // Excluimos esta propiedad de la serialización
   salesInvoice: SalesInvoice;
 

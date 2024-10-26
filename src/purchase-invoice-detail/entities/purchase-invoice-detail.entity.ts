@@ -10,7 +10,9 @@ export class PurchaseInvoiceDetail {
   purchaseInvoiceDetailId: number;
 
   @ApiProperty({ description: 'Factura de compra asociada', type: () => PurchaseInvoice })
-  @ManyToOne(() => PurchaseInvoice, (invoice) => invoice.details)
+  @ManyToOne(() => PurchaseInvoice, (invoice) => invoice.details, {
+    onDelete: 'CASCADE', // Asegura que se elimine el detalle si la factura se elimina
+  })
   purchaseInvoice: PurchaseInvoice;
 
   @ApiProperty({ description: 'Producto asociado', type: () => Product })

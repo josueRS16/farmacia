@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePurchaseInvoiceDto } from './dto/create-purchase-invoice.dto';
@@ -26,7 +26,25 @@ export class PurchaseInvoiceService {
   async create(createPurchaseInvoiceDto: CreatePurchaseInvoiceDto): Promise<PurchaseInvoice> {
     const { supplierId, paymentMethod, date, total, details, warehouseId } = createPurchaseInvoiceDto;
 
+    // Validar proveedor y almacén
     const supplier = await this.supplierService.findOne(supplierId);
+    if (!supplier) {
+      throw new BadRequestException('Proveedor no encontrado');
+    }
+
+    const warehouse = await this.warehouseService.findOne(warehouseId);
+    if (!warehouse) {
+      throw new BadRequestException('Almacén no encontrado');
+    }
+
+    // Validar productos
+    for (const detail of details) {
+      const product = await this.productService.findOne(detail.productId);
+      if (!product) {
+        throw new BadRequestException(`Producto con ID ${detail.productId} no encontrado`);
+      }
+    }
+
 
     // Crear la factura de compra
     const purchaseInvoice = this.purchaseInvoiceRepository.create({
@@ -34,6 +52,7 @@ export class PurchaseInvoiceService {
       total,
       paymentMethod,
       supplier,
+      warehouse
     });
 
     // Guardar la factura
@@ -75,7 +94,7 @@ export class PurchaseInvoiceService {
 
   async findAll(): Promise<PurchaseInvoice[]> {
     return await this.purchaseInvoiceRepository.find({
-      relations: ['supplier', 'details', 'details.product.category'],
+      relations: ['supplier', 'warehouse', 'details', 'details.product.category'],
     });
   }
 
@@ -88,6 +107,18 @@ export class PurchaseInvoiceService {
       throw new NotFoundException(`Factura de compra con ID ${id} no encontrada`);
     }
     return purchaseInvoice;
+  }
+
+  async remove(purchaseInvoiceId: number): Promise<void> {
+    const purchaseInvoice = await this.purchaseInvoiceRepository.findOne({
+      where: { purchaseInvoiceId }, 
+    });
+
+    if (!purchaseInvoice) {
+      throw new NotFoundException(`Factura de compra con ID ${purchaseInvoiceId} no encontrada.`);
+    }
+
+    await this.purchaseInvoiceRepository.remove(purchaseInvoice);
   }
 
   // Métodos para actualizar y eliminar si son necesarios

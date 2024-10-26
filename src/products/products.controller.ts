@@ -12,9 +12,9 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @ApiBearerAuth('access-token')
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'external_user')
+  // @ApiBearerAuth('access-token')
+  // @UseGuards(RolesGuard)
+  // @Roles('external_user')
   @ApiOperation({ summary: 'Crear un nuevo producto' })
   async create(@Body() createProductDto: CreateProductDto) {
     return await this.productService.create(createProductDto);
@@ -33,9 +33,9 @@ export class ProductController {
   }
 
   @Get()
-  @ApiBearerAuth('access-token')
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'external_user')
+  // @ApiBearerAuth('access-token')
+  // @UseGuards(RolesGuard)
+  // @Roles('admin', 'external_user')
   @ApiOperation({ summary: 'Obtener todos los productos' })
   async findAll() {
     return await this.productService.findAll();
